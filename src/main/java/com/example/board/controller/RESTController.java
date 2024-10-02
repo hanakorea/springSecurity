@@ -1,4 +1,4 @@
-package com.example.board;
+package com.example.board.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.board.TestVO;
+import com.example.board.domain.User;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -81,13 +84,13 @@ public class RESTController {
 		return "요청한 페이지 번호: "  + page;
 	}
 	
-	@GetMapping("/user")
-	public User user() {
-		// db에서 특정 유저 정보를 가져왔음
-		User user1 = new User(1, "kim","1234", "aaaa@gmail");
-		
-		return user1;
-	}
+//	@GetMapping("/user")
+//	public User user() {
+//		// db에서 특정 유저 정보를 가져왔음
+//		User user1 = new User(1, "kim","1234", "aaaa@gmail");
+//		
+//		return user1;
+//	}
 	
 	@PostMapping("/user")
 	public String printUser(User user) {
