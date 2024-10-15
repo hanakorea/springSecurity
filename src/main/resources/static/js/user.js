@@ -23,10 +23,23 @@ const userObject = {
 			contentType: "application/json; charset=utf-8"
 		}).done(function(response){
 			console.log(response)
-			alert(response.data);
 			//원래 페이지로 이동
-			if(response.status == 200) //정상적으로 회원가입됬을 때
+			if(response.status == 200){ //정상적으로 회원가입됬을 때
+				alert(response.data);
 				location.href = "/";
+		 	}else{
+				const result = response.data
+				let msg = '';
+				
+				if(result.username != null)
+					msg += result.username + "\n";
+				if(result.password != null)
+					msg += result.password + "\n";
+				if(result.email != null)
+					msg += result.email;
+				
+				alert(msg);
+			}	
 		}).fail(function(error){
 			console.log(error);
 		})
@@ -64,15 +77,14 @@ $("#btn-delete").on('click',(e)=>{
 		return;
 	
 	alert('탈퇴처리 진행할 예정');
-	let user ={ 
-		id : $("#id").val(),
-	};
+	/*let user ={ 
+		id : $("#id").val(),}; 보낼 정보가 여러개 일때 유용*/
+	
+	let id = $("#id").val()
 	
 	$.ajax({
 		type : "DELETE",
-		url : "/auth/delete",
-		data : JSON.stringify(user),
-		contentType : "application/json; charset=utf-8"
+		url : "/auth/delete?id="+ id/*쿼리스트링 방법*/
 	}).done(function(reponse){
 		alert(reponse.data);
 		

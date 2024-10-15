@@ -1,26 +1,39 @@
 package com.example.board.controller;
 
-import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.board.domain.ResponseDTO;
 import com.example.board.domain.User;
+import com.example.board.dto.UserDTO;
 import com.example.board.repository.UserRepository;
 import com.example.board.service.UserService;
 
 
 @Controller
+//@RequestMapping("/auth") // 여기 컨크롤러에 있는 모든 요청주소는 /auth로 시작 
 public class UserController {
+	
+	@Autowired
+	private ModelMapper modelMapper;
 	
 	@Autowired
 	private UserService userService;
@@ -34,7 +47,20 @@ public class UserController {
 //	 DB관련 작업은 repository만 함
 	@PostMapping("/auth/insertuser")// json형태로 받아올 수 있음
 	@ResponseBody // json으로 변경하기 위함 - 현재 string 사용시 jsp형태로 인식하기 때문
-	public ResponseDTO<?> insertUser(@RequestBody User user) {
+	// 유효성 검사시 유효성 검사 객체는 무조건 앞에, bindingResult는 유효성 결과 결과를 저장하는 객체
+	public ResponseDTO<?> insertUser(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
+		
+//		if(bindingResult.hasErrors()) {
+//			
+//			Map<String, String> errors = new HashMap<>();
+//			
+// 			for(FieldError error : bindingResult.getFieldErrors()) {
+//				errors.put(error.getField(), error.getDefaultMessage()); // (error의 필드, error의 message)
+//			}
+// 			return new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), errors);
+//		}
+		// 모델멥퍼 이용해 값 이동
+		User user = modelMapper.map(userDTO, User.class);
 		
 		// 아이디 중복검사
 		User findUser = userService.getUser(user.getUsername());
@@ -115,16 +141,29 @@ public class UserController {
 		return new ResponseDTO<>(HttpStatus.OK.value(), "회원정보 수정완료");
 	}
 	
+	
+	
 	@DeleteMapping("/auth/delete")
 	@ResponseBody
-	public ResponseDTO<?> delete(@RequestBody User user, HttpSession session) {
-		User userDe = userRepository.findById(user.getId()).get();
-		userRepository.deleteById(userDe.getId());
-//		userRepository.deleteById(user.getId());
+	public ResponseDTO<?> delete(@RequestParam int id, HttpSession session){
+		System.out.println(id);
 		
-		session.setAttribute("pincipal", null);
-		return new ResponseDTO<>(HttpStatus.OK.value(), "회원탈퇴 성공");
+		userRepository.deleteById(id);
+		session.invalidate(); // 로그인한 세션 정보 지우기 
+		
+		return new ResponseDTO<>(HttpStatus.OK.value(), "회원 탈퇴 완료");
 	}
+	
+//	@DeleteMapping("/auth/delete")
+//	@ResponseBody
+//	public ResponseDTO<?> delete(@RequestBody User user, HttpSession session) {
+//		User userDe = userRepository.findById(user.getId()).get();
+//		userRepository.deleteById(userDe.getId());
+////		userRepository.deleteById(user.getId());
+//		
+//		session.invalidate();
+//		return new ResponseDTO<>(HttpStatus.OK.value(), "회원탈퇴 성공");
+//	}
 	
 	
 	
