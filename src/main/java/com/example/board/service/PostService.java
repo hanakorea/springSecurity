@@ -64,5 +64,10 @@ public class PostService {
 		postRepository.deleteById(id);
 	}
 	
+	public Page<Post> search(String keyword, Pageable pageable){
+		Page<Post> result = postRepository.findByTitleContaining(keyword, pageable);
+		return result;
+	}
+	
 	}
 

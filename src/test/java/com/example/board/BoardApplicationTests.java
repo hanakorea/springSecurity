@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.board.domain.Post;
 import com.example.board.domain.User;
@@ -15,24 +16,17 @@ import com.example.board.repository.UserRepository;
 @SpringBootTest
 class BoardApplicationTests {
 
-	@Autowired // 필요한 객체를 불러오기위한 어노테이션
-	private UserRepository userRepository; 
-	
-	@Autowired
-	private PostRepository postRepository;
-	
 	@Test
 	void contextLoads() {
-		User user = userRepository.findById(5).get();
+		// 비밀번호를 해싱(암호화하는)
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		String pw = "123zcvs@#!@#";
+		String encodePw = encoder.encode(pw);
 		
-		for(int i=0; i<100; i++) {
-			Post post  = new Post();
-			post.setTitle("임시 게시물 제목" + i);
-			post.setContent("임시 게시물 내용" + i);
-			post.setUser(user);
-			
-			postRepository.save(post);
-		}
+		System.out.println("암호화 전 비번 : " + pw);
+		System.out.println("암호화 후 비번 : " + encodePw);
+		System.out.println("두개 비교 : " + pw.equals(encodePw));
+		System.out.println("진짜 두개 비교 :" + encoder.matches(pw, encodePw));
 	}
 
 }

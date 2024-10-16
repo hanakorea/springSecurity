@@ -15,7 +15,7 @@
    </div>
    <div>
       <p>포스트 번호 : <span id="id">${postInfo.id}</span></p>
-      <p>작성자 : ${postInfo.user.username}</p>
+      <p>작성자 : ${principal.user.username}</p>
    </div>
    <hr>
    <button class="btn btn-secondary" onclick="history.back()">돌아가기</button>

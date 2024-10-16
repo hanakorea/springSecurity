@@ -117,4 +117,14 @@ public class PostController {
 		return new ResponseDTO<>(HttpStatus.OK.value(),id + "삭제 됨");
 	}
 	
+	//게시물 검색
+	@GetMapping("/post/search")
+	public String search(String keyword, Model model, @PageableDefault(size = 2, sort="id", direction = Direction.DESC) Pageable pageable){
+		Page<Post> result = postService.search(keyword, pageable);
+		model.addAttribute("postList", result);
+		model.addAttribute("pageDTO", new PageDTO(result));
+		model.addAttribute("keyword",keyword);
+		return "index";
+	}
+	
 }

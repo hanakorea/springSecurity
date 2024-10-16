@@ -2,6 +2,13 @@
    pageEncoding="UTF-8"%>
    
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>  <!-- 테그 형식으로 쓸수있게 도와줌(조건문,반복문 등을 사용하기위해 jsp/jstl) -->
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+
+<!-- 로그인 했는지 안했는지 여부 시큐리티에서 if같은 역할-->
+<sec:authorize access="isAuthenticated()">
+	<sec:authentication property="principal" var="principal" /> <!-- property는 로그인 정보, var는 jsp에 그것을 담는 변수 -->
+</sec:authorize>
+
 <!DOCTYPE html>
 <html>
    <head>
@@ -26,7 +33,7 @@
             <span class="navbar-toggler-icon"></span>
          </button>
          <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-         	<c:if test="${sessionScope.principal == null}">
+         	<c:if test="${principal == null}">
 	            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 	               <li class="nav-item"><a class="nav-link active"
 	                  aria-current="page" href="/auth/insertuser">회원가입</a></li>
@@ -36,17 +43,17 @@
 	                  aria-disabled="true">Disabled</a></li>
 	            </ul>
             </c:if>
-          <c:if test="${sessionScope.principal != null}">
+          <c:if test="${principal != null}">
 	            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 	               <li class="nav-item"><a class="nav-link" href="/auth/userinfo">회원 정보</a></li>
 	               <li class="nav-item"><a class="nav-link" href="/auth/logout">로그아웃</a></li>
 	               <li class="nav-item"><a class="nav-link" href="/post">게시물 등록</a></li>          
 	            </ul>
             </c:if>
-            <form class="d-flex" role="search">
+            <form class="d-flex" role="search" method="get" action="/post/search">
                <input class="form-control me-2" type="search" placeholder="Search"
-                  aria-label="Search">
-               <button class="btn btn-outline-success" type="submit">Search</button>
+                  aria-label="Search" name="keyword">
+               <button class="btn btn-outline-success" type="submit" value="${keyword}">Search</button>
             </form>
          </div>
       </div>

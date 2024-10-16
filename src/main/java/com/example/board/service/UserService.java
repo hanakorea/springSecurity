@@ -3,6 +3,7 @@ package com.example.board.service;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -16,10 +17,16 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	//회원가입 처리 해주는 메서드 만들것임
 	@Transactional
 	public void insertUser(User user) {
 		user.setRole(RoleType.USER);
+		
+		// password암호화
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		
 		userRepository.save(user);
 
